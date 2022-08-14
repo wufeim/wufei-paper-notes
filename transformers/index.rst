@@ -1,5 +1,5 @@
 Transformers
-===========
+============
 
 .. toctree::
    :maxdepth: 1

@@ -33,6 +33,7 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Paper 1" href="paper1.html" />
@@ -191,8 +192,28 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   Summary
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#key-ideas">
    Key Ideas
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#technical-details">
+   Technical Details
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   Notes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
   </a>
  </li>
 </ul>
@@ -219,14 +240,85 @@
 <ul class="simple">
 <li><p>Authors: Guolin Ke, Di He, Tie-Yan Liu</p></li>
 <li><p>Affiliations: Microsoft Research</p></li>
+<li><p>ICLR, 2021</p></li>
+<li><p>Links: <a class="reference external" href="https://arxiv.org/abs/2006.15595">arXiv</a>, <a class="reference external" href="https://livejohnshopkins-my.sharepoint.com/:b:/g/personal/wma27_jh_edu/EQdQ1YCVjdBEmaaIWnoydt4BOjjCAh0Bsvxx2EuV9EqZ7w?e=y7ccg3">notes</a></p></li>
 </ul>
-<section id="key-ideas">
-<h2>Key Ideas<a class="headerlink" href="#key-ideas" title="Permalink to this headline">#</a></h2>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">#</a></h2>
 <p>Usually in transformers (e.g., BERT), we add the positional encoding to the word embeddings, which brings mixed correlations between two heterogeneous information resources.</p>
 <ol class="arabic simple">
 <li><p>The attention includes two unwanted terms involving the dot product between positional embeddings and word embeddings.</p></li>
 <li><p>The class embedding <code class="code docutils literal notranslate"><span class="pre">[CLS]</span></code> will be biased towards the word tokens nearby.</p></li>
 </ol>
+<p>The authors propose a new positional encoding method called <strong>Transformer with Untied Positional Encoding</strong> (TUPE). Experiments and ablation studies on GLUE benchmark demonstrate the effectiveness of this method.</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="../_images/rethinking_positional_encoding_in_language_pretraining-1.png"><img alt="../_images/rethinking_positional_encoding_in_language_pretraining-1.png" src="../_images/rethinking_positional_encoding_in_language_pretraining-1.png" style="height: 360px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 1: The architecture of TUPE.</span><a class="headerlink" href="#id3" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="key-ideas">
+<h2>Key Ideas<a class="headerlink" href="#key-ideas" title="Permalink to this headline">#</a></h2>
+<p><strong>Untie correlations between positions and words</strong>. Consider the absolute positional encoding in the transformer. A learnable real-valued vector <span class="math notranslate nohighlight">\(p_i \in \mathbb{R}^d\)</span> is added to the word embedding <span class="math notranslate nohighlight">\(w_i\)</span> at position <span class="math notranslate nohighlight">\(i\)</span>. The self-attention is calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\alpha_{ij}^\text{Abs} = &amp; \frac{1}{\sqrt{d}} ((w_i + p_i)W^{Q, 1}) ((w_j + p_j)W^{K, 1})^\top \\
+= &amp; \frac{1}{\sqrt{d}} [ (w_iW^{Q, 1}(w_jW^{K, 1})^\top) + (w_iW^{Q, 1}(p_jW^{K, 1})^\top) \\
+&amp; + (p_iW^{Q, 1}(w_jW^{K, 1})^\top) + (p_iW^{Q, 1}(p_jW^{K, 1})^\top) ]\end{split}\]</div>
+<p>which includes four terms: word-to-word, word-to-position, position-to-word, and position-to-position correlations. The authors argue that the second and the third terms are unwanted. Moreover, from the figure below, the word-to-position and position-to-word correlations seem uniform across positions.</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="../_images/rethinking_positional_encoding_in_language_pretraining-2.png"><img alt="../_images/rethinking_positional_encoding_in_language_pretraining-2.png" src="../_images/rethinking_positional_encoding_in_language_pretraining-2.png" style="height: 150px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 2: Visualizations of four correlations: word-to-word, word-to-position, position-to-word, and position-to-position.</span><a class="headerlink" href="#id4" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Therefore, the authors propose to remove the second and third terms, and the positional encoding attention are added to each layer as an attention bias.</p>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="../_images/rethinking_positional_encoding_in_language_pretraining-3.png"><img alt="../_images/rethinking_positional_encoding_in_language_pretraining-3.png" src="../_images/rethinking_positional_encoding_in_language_pretraining-3.png" style="height: 240px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 3: Untie correlations bewteen positions and words.</span><a class="headerlink" href="#id5" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p><strong>Untie the class embedding from positions.</strong> In BERT, the class embedding <code class="code docutils literal notranslate"><span class="pre">[CLS]</span></code> is treated just like other tokens. However, regular words often have strong local dependencies and many visualizations [2, 3] show that the attention distributions of some heads concentrate locally. Therefore, treating <code class="code docutils literal notranslate"><span class="pre">[CLS]</span></code> like other tokens will make <code class="code docutils literal notranslate"><span class="pre">[CLS]</span></code> biased to focus on the first several words instead of the whole sentence.</p>
+<p>Therefore, the authors propose to set the correlation scores related to the <code class="code docutils literal notranslate"><span class="pre">[CLS]</span></code> positional encoding to a fixed learnable parameter <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="../_images/rethinking_positional_encoding_in_language_pretraining-5.png"><img alt="../_images/rethinking_positional_encoding_in_language_pretraining-5.png" src="../_images/rethinking_positional_encoding_in_language_pretraining-5.png" style="height: 150px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 4: Illustration of untying <code class="code docutils literal notranslate"><span class="pre">[CLS]</span></code>.</span><a class="headerlink" href="#id6" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="technical-details">
+<h2>Technical Details<a class="headerlink" href="#technical-details" title="Permalink to this headline">#</a></h2>
+<p><strong>Implementations.</strong> Two variants of TUPE are developed: TUPE-A with untied absolute positional encoding, and TUPE-R with an additional relative positional encoding.</p>
+<p><strong>Efficiency.</strong> The projection matrices <span class="math notranslate nohighlight">\(U^Q\)</span> and <span class="math notranslate nohighlight">\(U^K\)</span> for positional embeddings are shared across layers and only increase 1% of the 110M parameters.</p>
+<p><strong>Absolute and relative positional encodings are not redundant to each other.</strong></p>
+<p><strong>Experimental results.</strong></p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="../_images/rethinking_positional_encoding_in_language_pretraining-4.png"><img alt="../_images/rethinking_positional_encoding_in_language_pretraining-4.png" src="../_images/rethinking_positional_encoding_in_language_pretraining-4.png" style="height: 180px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 5: GLUE scores on dev set.</span><a class="headerlink" href="#id7" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p><strong>Visualizations of learned positional correlations by TUPE-A.</strong></p>
+<figure class="align-default" id="id8">
+<a class="reference internal image-reference" href="../_images/rethinking_positional_encoding_in_language_pretraining-6.png"><img alt="../_images/rethinking_positional_encoding_in_language_pretraining-6.png" src="../_images/rethinking_positional_encoding_in_language_pretraining-6.png" style="height: 130px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 6: Visualizations of learned positional correlations by TUPE-A.</span><a class="headerlink" href="#id8" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="id1">
+<h2>Notes<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<ol class="arabic simple">
+<li><p>The implementations of untying positional encodings and textual embeddings is not exactly the same as explained in the paper. In BERT, the positional encodings are fused with the features and subsequent layers may learn a very complex correlation. However, in this paper, the position correlations are fixed across layers. It works fine but all the explanations do not necessarily stand.</p></li>
+</ol>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
+<p>[1] G. Ke, D. He, T. Liu. <a class="reference external" href="https://arxiv.org/abs/2006.15595">“Rethinking positional encoding in language pre-training.”</a>. In <em>ICLR</em>, 2021.</p>
+<p>[2] K. Clark, U. Khandelwal, O. Levy, C. D. Manning. <a class="reference external" href="https://arxiv.org/abs/1906.04341">“What does BERT look at? An analysis of BERT’s attention”</a>. In <em>ACL</em>, 2019.</p>
+<p>[3] L. Gong, D. He, Z. Li, T. Qin, L. Wang, T. Liu. <a class="reference external" href="https://proceedings.mlr.press/v97/gong19a.html">“Efficient training of BERT by progresssively stacking”</a>. In <em>ICML</em>, 2019.</p>
 </section>
 </section>
 
