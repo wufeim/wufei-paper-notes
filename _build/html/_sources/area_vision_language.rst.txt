@@ -1,8 +1,8 @@
-Transformers
-============
+Vision-Language
+===============
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Vision-Language
 
    transformers/rethinking_positional_encoding_in_language_pretraining

@@ -1,19 +1,9 @@
-.. Wufei's Notes documentation master file, created by
-   sphinx-quickstart on Thu Aug 11 20:52:12 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Paper Reading Notes
 ===================
 
 .. toctree::
-   :maxdepth: 1
-   :caption: By Areas
+   :maxdepth: 2
+   :caption: Contents
 
-   areas/transformers
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Aug 2022
-
-   transformers/rethinking_positional_encoding_in_language_pretraining
+   by_areas
+   aug_2022

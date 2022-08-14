@@ -1,8 +1,0 @@
-Transformers
-============
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Transformers
-
-   ../transformers/rethinking_positional_encoding_in_language_pretraining
