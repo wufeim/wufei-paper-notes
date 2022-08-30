@@ -7,3 +7,4 @@ By Areas
 
    transformers/index
    nerf/index
+   compositional/index

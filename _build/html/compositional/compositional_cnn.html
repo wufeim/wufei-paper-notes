@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>NeRF &#8212; Wufei Ma 1.0.0 documentation</title>
+    <title>Compositional Convolutional Neural Networks: A Deep Architecture with Innate Robustness to Partial Occlusion &#8212; Wufei Ma 1.0.0 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -35,8 +35,8 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pixelNeRF: Neural Radiance Fields from One or Few Images" href="pixelnerf.html" />
-    <link rel="prev" title="Paper 2" href="../transformers/paper2.html" />
+    <link rel="next" title="Amodal Segmentation through Out-of-Task and Out-of-Distribution with a Bayesian Model" href="amodal_seg_bayesian_model.html" />
+    <link rel="prev" title="Compositional Models" href="index.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="None">
   </head>
@@ -166,40 +166,40 @@
    </li>
   </ul>
  </li>
- <li class="toctree-l1 current active has-children">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../nerf/index.html">
    NeRF
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
   <label for="toctree-checkbox-2">
    <i class="fas fa-chevron-down">
    </i>
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="pixelnerf.html">
+    <a class="reference internal" href="../nerf/pixelnerf.html">
      pixelNeRF: Neural Radiance Fields from One or Few Images
     </a>
    </li>
   </ul>
  </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../compositional/index.html">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="index.html">
    Compositional Models
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../compositional/compositional_cnn.html">
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      Compositional Convolutional Neural Networks: A Deep Architecture with Innate Robustness to Partial Occlusion
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="../compositional/amodal_seg_bayesian_model.html">
+    <a class="reference internal" href="amodal_seg_bayesian_model.html">
      Amodal Segmentation through Out-of-Task and Out-of-Distribution with a Bayesian Model
     </a>
    </li>
@@ -223,9 +223,39 @@
     
     <div class="toc-item">
       
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   Summary
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#key-ideas">
+   Key Ideas
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#technical-details">
+   Technical Details
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#notes">
+   Notes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
 </nav>
     </div>
     
@@ -243,14 +273,30 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="nerf">
-<h1>NeRF<a class="headerlink" href="#nerf" title="Permalink to this headline">#</a></h1>
-<div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Papers</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="pixelnerf.html">pixelNeRF: Neural Radiance Fields from One or Few Images</a></li>
+  <section id="compositional-convolutional-neural-networks-a-deep-architecture-with-innate-robustness-to-partial-occlusion">
+<h1>Compositional Convolutional Neural Networks: A Deep Architecture with Innate Robustness to Partial Occlusion<a class="headerlink" href="#compositional-convolutional-neural-networks-a-deep-architecture-with-innate-robustness-to-partial-occlusion" title="Permalink to this headline">#</a></h1>
+<ul class="simple">
+<li><p>Authors: Adam Kortylewski, Ju He, Qing Liu, Alan Yuille</p></li>
+<li><p>Affiliations: Johns Hopkins University</p></li>
+<li><p>CVPR, 2020</p></li>
+<li><p>Links: <a class="reference external" href="https://arxiv.org/abs/2003.04490">arXiv</a>, <a class="reference external" href="https://openaccess.thecvf.com/content_CVPR_2020/html/Kortylewski_Compositional_Convolutional_Neural_Networks_A_Deep_Architecture_With_Innate_Robustness_CVPR_2020_paper.html">thecvf.com</a></p></li>
 </ul>
-</div>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="key-ideas">
+<h2>Key Ideas<a class="headerlink" href="#key-ideas" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="technical-details">
+<h2>Technical Details<a class="headerlink" href="#technical-details" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
+<p>[1] A. Kortylewski, J. He, Q. Liu, A. Yuille. <a class="reference external" href="https://arxiv.org/abs/2003.04490">“Compositional convolutional neural networks: A deep architecture with innate robustness to partial occlusion.”</a>. In <em>CVPR</em>, 2020.</p>
+</section>
 </section>
 
 
@@ -261,17 +307,17 @@
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="../transformers/paper2.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="index.html" title="previous page">
       <i class="fas fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">Paper 2</p>
+          <p class="prev-next-title">Compositional Models</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="pixelnerf.html" title="next page">
+  <a class='right-next' id="next-link" href="amodal_seg_bayesian_model.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">pixelNeRF: Neural Radiance Fields from One or Few Images</p>
+      <p class="prev-next-title">Amodal Segmentation through Out-of-Task and Out-of-Distribution with a Bayesian Model</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>
