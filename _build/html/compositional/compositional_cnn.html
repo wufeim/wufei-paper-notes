@@ -33,6 +33,7 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Amodal Segmentation through Out-of-Task and Out-of-Distribution with a Bayesian Model" href="amodal_seg_bayesian_model.html" />
@@ -283,12 +284,64 @@
 </ul>
 <section id="summary">
 <h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">#</a></h2>
+<p>Recent findings show that deep convolutional neural networks (DCNNs) do not generalize well under partial occlusion. The authors propose to integrate compositional models and DCNNs into a unified deep model with innate robustness to partial occlusion, termed <strong>Compositional CNN</strong>.</p>
+<p>Results show that DCNNs do not classify occluded objects robustly, even when trained with data that is strongly augmented with partial occlusions. The proposed model, CompositionalNets, outperforms standard DNNs by a wide margin at classifying partially occluded objects, even when it has not been exposed to occluded objects during training.</p>
 </section>
 <section id="key-ideas">
 <h2>Key Ideas<a class="headerlink" href="#key-ideas" title="Permalink to this headline">#</a></h2>
+<p><strong>Fully generative compositional models.</strong> Let <span class="math notranslate nohighlight">\(F^l \in \mathbb{R}^{H \times W \times D}\)</span> be the output of a layer <span class="math notranslate nohighlight">\(l\)</span> in a DCNN. The authors proposed a differentiable generative compositional model of the feature activations <span class="math notranslate nohighlight">\(p(F \mid y)\)</span> for an object class <span class="math notranslate nohighlight">\(y\)</span>, which is modeled as a mixture of von-Mises-Fisher (vMF) distributions:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+p(F \mid \theta_y) &amp; = \prod_p p(f_p \mid \mathcal{A}_{p, y}, \Lambda) \\
+p(f_p \mid \mathcal{A}_{p, y}, \Lambda) &amp; = \sum_k \alpha_{p, k, y}p(f_p \mid \lambda_k)
+\end{align*}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\theta_k = \{ \mathcal{A}_y, \Lambda\}\)</span> are the model parameters and <span class="math notranslate nohighlight">\(\mathcal{A}_y = \{\mathcal{A}_{p, y}\}\)</span> are the parameters of the mixture models at every position <span class="math notranslate nohighlight">\(p \in \mathcal{P}\)</span> on the 2D lattice. In particular, <span class="math notranslate nohighlight">\(\mathcal{A}_{p, y} = \{\alpha_{p,0,y}, \dots, \alpha_{p, K, y} \mid \sum_{k=0}^K \alpha_{p, k, y} = 1\}\)</span> are the mixture coefficients and <span class="math notranslate nohighlight">\(\Lambda = \{\lambda_k = \{\sigma_k, \mu_k\} \mid k = 1, \dots, K\}\)</span> are the parameters of the vMF distribution:</p>
+<div class="math notranslate nohighlight">
+\[p(f_p \mid \lambda_k) = \frac{e^{\sigma_k \mu_k^\top f_p}}{Z(\sigma_k)}, \lVert f_p \rVert = 1, \lVert \mu_k \rVert = 1\]</div>
+<p>where <span class="math notranslate nohighlight">\(Z(\sigma_k)\)</span> is the normalization constant.</p>
+<p><strong>Occlusion reasoning.</strong> Compositional models can be augmented with an occlusion model at each position <span class="math notranslate nohighlight">\(p\)</span>, either the object model <span class="math notranslate nohighlight">\(p(f_p \mid \mathcal{A}_{p, y}^m, \Lambda)\)</span> or the occluder model <span class="math notranslate nohighlight">\(p(f_p \mid \beta, \Lambda)\)</span> is active:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+p(F \mid \theta_y^m, \beta) &amp; = \prod_p p(f_p, z_p^m = 0)^{1-z_p^m} p(f_p, z_p^m 1)^{z_p^m} \\
+p(f_p, z_p^m = 1) &amp; = p(f_p \mid \beta, \Lambda) p(z_p^m = 1) \\
+p(f_p, z_p^m = 0) &amp; = p(f_p \mid \mathcal{A}_{p, y}^m, \Lambda) p(z_p^m = 0)
+\end{align*}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{Z}^m = \{z_p^m \in \{0, 1\} \mid p \in \mathcal{P}\}\)</span>.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="../_images/compositional_cnn-1.png"><img alt="../_images/compositional_cnn-1.png" src="../_images/compositional_cnn-1.png" style="height: 220px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 1: Feed-forward inference with a CompositionalNet.</span><a class="headerlink" href="#id2" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
 </section>
 <section id="technical-details">
 <h2>Technical Details<a class="headerlink" href="#technical-details" title="Permalink to this headline">#</a></h2>
+<p><strong>Inference as feed-forward neural network.</strong> The computational graph of the fully generative compositional model is directed and acyclic, and can be inferenced with a single forward pass.</p>
+<p><strong>End-to-end training of CompositionalNets.</strong> The model is fully differentiable and can be trained end-to-end using backpropagation. The loss function is composed of four terms</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}(y, y', F, T) = \mathcal{L}_\text{class}(y, y') + \gamma_1 \mathcal{L}_\text{weight}(\omega) + \gamma_2 \mathcal{L}_\text{vwf}(F, \Lambda) + \gamma_3 \mathcal{L}_\text{mix}(F, \mathcal{A}_y)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{L}_\text{class}\)</span> is the cross-entropy loss between the network output <span class="math notranslate nohighlight">\(y'\)</span> and the true class label <span class="math notranslate nohighlight">\(y\)</span>, <span class="math notranslate nohighlight">\(\mathcal{L}_\text{weight}\)</span> is the weight regularization on the DCNN parameters, <span class="math notranslate nohighlight">\(\mathcal{L}_\text{vmf}\)</span> and <span class="math notranslate nohighlight">\(\mathcal{L}_\text{mix}\)</span> regularize the parameters of the compositional model to have maximum likelihood for the features in <span class="math notranslate nohighlight">\(F\)</span>.</p>
+<p><strong>Classification results for vehicles of PASCAL3D+ with different levels of artificial occlusion.</strong></p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="../_images/compositional_cnn-2.png"><img alt="../_images/compositional_cnn-2.png" src="../_images/compositional_cnn-2.png" style="height: 200px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 2: Classification results for vehicles of PASCAL3D+ with different levels of artificial occlusion.</span><a class="headerlink" href="#id3" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p><strong>Classification results for vehicles of MS-COCO with different levels of real occlusion.</strong></p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="../_images/compositional_cnn-3.png"><img alt="../_images/compositional_cnn-3.png" src="../_images/compositional_cnn-3.png" style="height: 180px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 3: Classification results for vehicles of MS-COCO with different levels of real occlusion.</span><a class="headerlink" href="#id4" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p><strong>Occlusion localization results.</strong></p>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="../_images/compositional_cnn-4.png"><img alt="../_images/compositional_cnn-4.png" src="../_images/compositional_cnn-4.png" style="height: 280px;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 4: Occlusion localization results.</span><a class="headerlink" href="#id5" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">#</a></h2>
