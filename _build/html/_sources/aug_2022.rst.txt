@@ -5,6 +5,7 @@ Aug 2022
    :maxdepth: 1
    :caption: Aug 2022
 
+   vqa/calibrating_concepts_and_operations
    compositional/compositional_cnn
    compositional/amodal_seg_bayesian_model
    nerf/pixelnerf
